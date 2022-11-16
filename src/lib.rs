@@ -7,6 +7,7 @@ use std::{
 };
 use unicode_segmentation::UnicodeSegmentation;
 
+#[derive(Debug, Default)]
 pub struct Nfo {
     pub general: GeneralInformation,
     pub media: MediaInformation,
@@ -266,7 +267,7 @@ impl Nfo {
                 }
             }
         }
-        println!("{:?}", media);
+        
         let description = if description.is_empty(){None} else {Some(description)};
         Some(Self {
             general,
@@ -310,7 +311,7 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let nfo = Nfo::new(r"V:\Local-Books\Uprooted by Naomi Novik\Uprooted.nfo").unwrap();
-        
+        let nfo = Nfo::new(r"V:\Local-Books\War of the Posers - Bad Guys Series, Book 4 by Eric Ugland\War of the Posers Bad Guys Series, Book 4.nfo").unwrap();
+        println!("{:?}", nfo);
     }
 }
