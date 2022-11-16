@@ -135,19 +135,27 @@ impl Nfo {
 
                         "Duration" => {
                             if general.duration.is_none() {
-                                let hours = data[1]
-                                    .parse::<i64>()
-                                    .expect("failed to parce hours in duration");
-                                let min = data[3]
-                                    .parse::<i64>()
-                                    .expect("failed to parce hours in duration");
-                                let sec = data[5]
-                                    .parse::<i64>()
-                                    .expect("failed to parce hours in duration");
+                                let mut duration = Duration::zero();
+                                if data.len() > 1{
+                                    let hours = data[1]
+                                        .parse::<i64>()
+                                        .expect("failed to parce hours in duration");
+                                        duration = Duration::hours(hours);
+                                }
 
-                                let duration = Duration::hours(hours)
-                                    + Duration::minutes(min)
-                                    + Duration::seconds(sec);
+                                if data.len() > 3{
+                                    let min = data[3]
+                                        .parse::<i64>()
+                                        .expect("failed to parce hours in duration");
+                                        duration = duration + Duration::minutes(min);
+                                }
+
+                                if data.len() > 5{
+                                    let sec = data[5]
+                                        .parse::<i64>()
+                                        .expect("failed to parce hours in duration");
+                                        duration = duration + Duration::seconds(sec);
+                                }
                                 general.duration = Some(duration)
                             }
                         }
