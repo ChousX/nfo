@@ -137,26 +137,31 @@ impl Nfo {
                             if general.duration.is_none() {
                                 let mut duration = Duration::zero();
                                 if data.len() > 1{
-                                    let hours = data[1]
-                                        .parse::<i64>()
-                                        .expect("failed to parce hours in duration");
-                                        duration = Duration::hours(hours);
+                                    match data[1].parse::<i64>(){
+                                        Ok(hours) => duration = Duration::hours(hours),
+                                        Err(_) => continue,
+                                    }
+                                        
+                                        
                                 }
 
                                 if data.len() > 3{
-                                    let min = data[3]
-                                        .parse::<i64>()
-                                        .expect("failed to parce hours in duration");
-                                        duration = duration + Duration::minutes(min);
+                                    match data[3].parse::<i64>(){
+                                        Ok(min) => duration = duration + Duration::minutes(min),
+                                        Err(_) => continue,
+                                    }
                                 }
 
                                 if data.len() > 5{
-                                    let sec = data[5]
-                                        .parse::<i64>()
-                                        .expect("failed to parce hours in duration");
-                                        duration = duration + Duration::seconds(sec);
+                                    match data[5].parse::<i64>(){
+                                        Ok(sec) => duration = duration + Duration::seconds(sec),
+                                        Err(_) => continue,
+                                    }
+                                        
                                 }
-                                general.duration = Some(duration)
+                                if !duration.is_zero(){
+                                    general.duration = Some(duration)
+                                }
                             }
                         }
                         "Chapters" => {
