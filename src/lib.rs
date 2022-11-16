@@ -324,7 +324,7 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let nfo = Nfo::new(r"V:\Local-Books\War of the Posers - Bad Guys Series, Book 4 by Eric Ugland\War of the Posers Bad Guys Series, Book 4.nfo").unwrap();
-        println!("{:?}", nfo);
+        // let nfo = Nfo::new(r"V:\Local-Books\War of the Posers - Bad Guys Series, Book 4 by Eric Ugland\War of the Posers Bad Guys Series, Book 4.nfo").unwrap();
+        // println!("{:?}", nfo);
     }
 }
