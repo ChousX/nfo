@@ -28,17 +28,17 @@ pub struct GeneralInformation {
 }
 
 #[derive(Debug, Default)]
-pub struct MediaInformation{
+pub struct MediaInformation {
     pub source: Source,
     pub encode: Encoded,
     pub chapter_adjust: Option<String>,
     pub chapter_rename: Option<String>,
     pub ripper: Option<String>,
-    pub id_tagging: Option<String>
+    pub id_tagging: Option<String>,
 }
 
 #[derive(Debug, Default)]
-pub struct Source{
+pub struct Source {
     pub format: Option<String>,
     pub sample_rate: Option<String>,
     pub channels: Option<u16>,
@@ -46,15 +46,13 @@ pub struct Source{
 }
 
 #[derive(Debug, Default)]
-pub struct Encoded{
+pub struct Encoded {
     pub lossless_encode: Option<bool>,
     pub codec: Option<String>,
     pub sample_rate: Option<String>,
     pub channels: Option<u16>,
     pub bitrate: Option<String>,
 }
-
-
 
 impl Nfo {
     pub fn new<T: Into<PathBuf>>(path: T) -> Option<Self> {
@@ -119,12 +117,11 @@ impl Nfo {
                         }
                         "Copyright" => {
                             if general.copyright.is_none() {
-
                                 let year = {
                                     let s = aux_string(&data[1..]);
-                                    match s.parse::<i32>(){
+                                    match s.parse::<i32>() {
                                         Ok(p) => p,
-                                        Err(_) => continue
+                                        Err(_) => continue,
                                     }
                                 };
                                 general.copyright = NaiveDate::from_ymd_opt(year, 0, 0);
@@ -144,30 +141,27 @@ impl Nfo {
                         "Duration" => {
                             if general.duration.is_none() {
                                 let mut duration = Duration::zero();
-                                if data.len() > 1{
-                                    match data[1].parse::<i64>(){
+                                if data.len() > 1 {
+                                    match data[1].parse::<i64>() {
                                         Ok(hours) => duration = Duration::hours(hours),
                                         Err(_) => continue,
                                     }
-                                        
-                                        
                                 }
 
-                                if data.len() > 3{
-                                    match data[3].parse::<i64>(){
+                                if data.len() > 3 {
+                                    match data[3].parse::<i64>() {
                                         Ok(min) => duration = duration + Duration::minutes(min),
                                         Err(_) => continue,
                                     }
                                 }
 
-                                if data.len() > 5{
-                                    match data[5].parse::<i64>(){
+                                if data.len() > 5 {
+                                    match data[5].parse::<i64>() {
                                         Ok(sec) => duration = duration + Duration::seconds(sec),
                                         Err(_) => continue,
                                     }
-                                        
                                 }
-                                if !duration.is_zero(){
+                                if !duration.is_zero() {
                                     general.duration = Some(duration)
                                 }
                             }
@@ -183,103 +177,96 @@ impl Nfo {
                         }
                         "Unabridged" => {
                             if general.unabridged.is_none() {
-                                let b  = data[1] == "Yes";
+                                let b = data[1] == "Yes";
                                 if b {
                                     general.unabridged = Some(true)
                                 } else if data[1] == "No" {
                                     general.unabridged = Some(false)
                                 }
-                                
                             }
                         }
                         _ => {}
                     },
-                    Section::MediaInformation => {
-                        match data[0]{
-                            "Source" => {
-                                match data[1]{
-                                    "Format" => {
-                                        if media.source.format.is_none(){
-                                            media.source.format = Some(aux_string(&data[2..]))
-                                        }
-                                    },
-                                    "Sample" => {
-                                        if data[2] != "Rate" {
-                                            continue;
-                                        }
-                                        if media.source.sample_rate.is_none(){
-                                            media.source.sample_rate = Some(aux_string(&data[3..]))
-                                        }
-                                    },
-                                    "Channels" => {
-                                        if media.source.channels.is_none(){
-                                            if let Ok(chan) = aux_string(&data[2..]).parse::<u16>() {
-                                                media.source.channels = Some(chan)
-                                            } else {
-                                                println!("failed to parse chapters")
-                                            }
-                                        }
-                                    },
-                                    "Bitrate" => {
-                                        if media.source.bitrate.is_none(){
-                                            media.source.bitrate = Some(aux_string(&data[2..]))
-                                        }
-                                    },
-                                    _ => {}
+                    Section::MediaInformation => match data[0] {
+                        "Source" => match data[1] {
+                            "Format" => {
+                                if media.source.format.is_none() {
+                                    media.source.format = Some(aux_string(&data[2..]))
                                 }
-                            },
-                            "Lossless" => {
-                                let b  = data[1] == "Yes";
-                                if b {
-                                     media.encode.lossless_encode= Some(true)
-                                } else if data[1] == "No" {
-                                    general.unabridged = Some(false)
+                            }
+                            "Sample" => {
+                                if data[2] != "Rate" {
+                                    continue;
                                 }
-                            },
-                            "Encoded" => {
-                                match data[1]{
-                                    "Codec" => {
-                                        if media.encode.codec.is_none(){
-                                            media.encode.codec = Some(aux_string(&data[2..]))
-                                        }
-                                    },
-                                    "Sample" => {
-                                        if data[2] != "Rate" {
-                                            continue;
-                                        }
-                                        media.encode.sample_rate = Some(aux_string(&data[3..]))
-                                    },
-                                    "Channels" => {
-                                        if media.encode.channels.is_none(){
-                                            if let Ok(chan) = aux_string(&data[2..]).parse::<u16>() {
-                                                media.encode.channels = Some(chan)
-                                            } else {
-                                                println!("failed to parse chanales")
-                                            }
-                                        }
-                                    },
-                                    "Bitrate" => {
-                                        if media.encode.bitrate.is_none(){
-                                            media.encode.bitrate = Some(aux_string(&data[2..]))
-                                        }
-                                    },
-                                    _ => {},
+                                if media.source.sample_rate.is_none() {
+                                    media.source.sample_rate = Some(aux_string(&data[3..]))
                                 }
-                            },
-                            "Chapter" => {
-                                if data[1] == "Adjust"{
-                                    if media.chapter_adjust.is_none(){
-                                        media.chapter_adjust = Some(aux_string(&data[2..]))
-                                    }
-                                } else if data[1] == "Rename" {
-                                    if media.chapter_rename.is_none(){
-                                        media.chapter_rename = Some(aux_string(&data[2..]))
+                            }
+                            "Channels" => {
+                                if media.source.channels.is_none() {
+                                    if let Ok(chan) = aux_string(&data[2..]).parse::<u16>() {
+                                        media.source.channels = Some(chan)
+                                    } else {
+                                        println!("failed to parse chapters")
                                     }
                                 }
                             }
-                            _ => {},
+                            "Bitrate" => {
+                                if media.source.bitrate.is_none() {
+                                    media.source.bitrate = Some(aux_string(&data[2..]))
+                                }
+                            }
+                            _ => {}
+                        },
+                        "Lossless" => {
+                            let b = data[1] == "Yes";
+                            if b {
+                                media.encode.lossless_encode = Some(true)
+                            } else if data[1] == "No" {
+                                general.unabridged = Some(false)
+                            }
                         }
-                    }
+                        "Encoded" => match data[1] {
+                            "Codec" => {
+                                if media.encode.codec.is_none() {
+                                    media.encode.codec = Some(aux_string(&data[2..]))
+                                }
+                            }
+                            "Sample" => {
+                                if data[2] != "Rate" {
+                                    continue;
+                                }
+                                media.encode.sample_rate = Some(aux_string(&data[3..]))
+                            }
+                            "Channels" => {
+                                if media.encode.channels.is_none() {
+                                    if let Ok(chan) = aux_string(&data[2..]).parse::<u16>() {
+                                        media.encode.channels = Some(chan)
+                                    } else {
+                                        println!("failed to parse chanales")
+                                    }
+                                }
+                            }
+                            "Bitrate" => {
+                                if media.encode.bitrate.is_none() {
+                                    media.encode.bitrate = Some(aux_string(&data[2..]))
+                                }
+                            }
+                            _ => {}
+                        },
+                        "Chapter" => {
+                            if data[1] == "Adjust" {
+                                if media.chapter_adjust.is_none() {
+                                    media.chapter_adjust = Some(aux_string(&data[2..]))
+                                }
+                            } else if data[1] == "Rename" {
+                                if media.chapter_rename.is_none() {
+                                    media.chapter_rename = Some(aux_string(&data[2..]))
+                                }
+                            }
+                        }
+                        _ => {}
+                    },
                     Section::BookDescription => {
                         description.push_str(&line);
                         description.push_str("/n");
@@ -288,12 +275,16 @@ impl Nfo {
                 }
             }
         }
-        
-        let description = if description.is_empty(){None} else {Some(description)};
+
+        let description = if description.is_empty() {
+            None
+        } else {
+            Some(description)
+        };
         Some(Self {
             general,
             media,
-            description
+            description,
         })
     }
 }
