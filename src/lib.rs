@@ -1,4 +1,4 @@
-use chrono::{Duration, NaiveDateTime};
+pub use chrono::{Duration, NaiveDate};
 use std::{
     fs::File,
     io::{BufRead, BufReader},
@@ -19,7 +19,7 @@ pub struct GeneralInformation {
     pub title: Option<String>,
     pub author: Option<String>,
     pub read_by: Option<String>,
-    pub copyright: Option<String>,
+    pub copyright: Option<NaiveDate>,
     pub genre: Option<String>,
     pub publisher: Option<String>,
     pub duration: Option<Duration>,
@@ -119,7 +119,16 @@ impl Nfo {
                         }
                         "Copyright" => {
                             if general.copyright.is_none() {
-                                general.copyright = Some(aux_string(&data[1..]))
+
+                                println!("{}", aux_string(&data[1..]));
+                                let year = {
+                                    let s = aux_string(&data[1..]);
+                                    match s.parse::<i32>(){
+                                        Ok(p) => p,
+                                        Err(_) => continue
+                                    }
+                                };
+                                general.copyright = NaiveDate::from_ymd_opt(year, 0, 0);
                             }
                         }
                         "Genre" => {
@@ -324,7 +333,7 @@ mod tests {
 
     #[test]
     fn it_works() {
-        // let nfo = Nfo::new(r"V:\Local-Books\War of the Posers - Bad Guys Series, Book 4 by Eric Ugland\War of the Posers Bad Guys Series, Book 4.nfo").unwrap();
+        let nfo = Nfo::new(r"V:\Local-Books\War of the Posers - Bad Guys Series, Book 4 by Eric Ugland\War of the Posers Bad Guys Series, Book 4.nfo").unwrap();
         // println!("{:?}", nfo);
     }
 }
