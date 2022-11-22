@@ -120,7 +120,6 @@ impl Nfo {
                         "Copyright" => {
                             if general.copyright.is_none() {
 
-                                println!("{}", aux_string(&data[1..]));
                                 let year = {
                                     let s = aux_string(&data[1..]);
                                     match s.parse::<i32>(){
